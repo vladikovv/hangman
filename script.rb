@@ -1,11 +1,11 @@
 require 'open-uri'
 
 class Game
-  attr_accessor :word, :correct_guesses, :correct_letters
+  attr_accessor :word, :correct_guesses, :correct_letters, :incorrect_guesses
 
   def initialize
     @word = generate_random_word
-    @max_incorrect_guesses = 10
+    @incorrect_guesses = 0
     @correct_guesses = 0
     @correct_letters = []
   end
@@ -23,9 +23,37 @@ class Game
     if word.include?(letter)
       @correct_guesses += 1
       correct_letters.push(letter)
+    else
+      @incorrect_guesses += 1
     end
+  end
+
+  def print_correct_guessed_letters
+    word.split('').each do |letter|
+      if correct_letters.include?(letter)
+        print "#{letter} "
+      else
+        print '_ '
+      end
+    end
+    print "\n"
   end
 end
 
-game = Game.new
-game.guess("X")
+def game_loop
+  game = Game.new
+  p game.word
+  game.print_correct_guessed_letters
+  while game.incorrect_guesses < 7
+    print "Guess the letters the word contains!\nInput a single letter: "
+    guess = gets.chomp
+    until guess.length == 1
+      print 'Input a SINGLE letter: '
+      guess = gets.chomp
+    end
+    game.guess(guess)
+    game.print_correct_guessed_letters
+  end
+end
+
+game_loop

@@ -76,6 +76,47 @@ def game_win?(game)
   game.correct_letters.length == game.word.split('').uniq.length
 end
 
+def lost_game_print
+  print "You sadly lost the game :( ...........\n"
+  sleep(1)
+  print "You guessed #{game.correct_guesses_count} letters correctly ..........\n"
+  sleep(2)
+  print "The word in question was #{game.word}......\n\n"
+  sleep(5)
+  print "Going to main menu .....\n\n\n"
+  sleep(2)
+end
+
+def won_game_print
+  print "You guessed it!!! NICe!\n"
+  sleep(1)
+  print "It took you #{game.correct_guesses_count + game.incorrect_guesses_count} guesses to finish!\n"
+  sleep(3)
+  print "Going to main menu!\n\n\n"
+  sleep(2)
+end
+
+def guess_input_prompt
+  sleep(0.5)
+  print "You have #{game.max_incorrect_guesses - game.incorrect_guesses_count} guesses remaining.\n\n"
+  sleep(0.5)
+  print "Guess the letters the word contains!\n"
+  sleep(0.5)
+  print "Input a single letter: "
+  sleep(1)
+end
+
+def correct_guess_print
+  print "CORRECT!"
+  sleep(1)
+end
+
+def incorrect_guess_print
+  print "sike.....\n"
+  sleep(1)
+  print "maybe next time.."
+end
+
 def main_menu
   print("H A N G M A N\n\n")
   sleep(2)
@@ -117,31 +158,24 @@ def play
   game = Game.new
   #p game.word
   game.print_correct_guessed_letters
+
   game_over = false
   until game_over
-    sleep(0.5)
-    print "You have #{game.max_incorrect_guesses - game.incorrect_guesses_count} guesses remaining.\n\n"
-    sleep(0.5)
-    print "Guess the letters the word contains!\n"
-    sleep(0.5)
-    print "Input a single letter: "
-    sleep(1)
+    guess_input_prompt
     guess = gets.chomp
     until guess.length == 1
       sleep(0.5)
       print 'Input a SINGLE letter: '
       guess = gets.chomp
     end
-    print "\n"
-    sleep(1)
+    print_newlines_and_sleep(1)
+
     if game.guess(guess)
-      print "CORRECT!"
-      sleep(1)
+      correct_guess_print
     else
-      print "sike.....\n"
-      sleep(1)
-      print "maybe next time.."
+      incorrect_guess_print
     end
+
     2.times do
       print_newlines_and_sleep(0.5)
     end
@@ -150,23 +184,10 @@ def play
     print("\n")
     game_over = game_lose?(game) || game_win?(game)
     if game_lose?(game)
-      print "You sadly lost the game :( ...........\n"
-      sleep(1)
-      print "You guessed #{game.correct_guesses_count} letters correctly ..........\n"
-      sleep(2)
-      print "The word in question was #{game.word}......\n\n"
-      sleep(5)
-
-      print "Going to main menu .....\n\n\n"
-      sleep(2)
+      lost_game_print
       main_menu
     elsif game_win?(game)
-      print "You guessed it!!! NICe!\n"
-      sleep(1)
-      print "It took you #{game.correct_guesses_count + game.incorrect_guesses_count} guesses to finish!\n"
-      sleep(3)
-      print "Going to main menu!\n\n\n"
-      sleep(2)
+      won_game_print
       main_menu
     end
   end

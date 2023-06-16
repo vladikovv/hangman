@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'json'
 
 class Game
   attr_accessor :word, :correct_guesses_count, :correct_letters, :incorrect_guesses_count, :attempts_count
@@ -61,6 +62,21 @@ class Game
     print "Good luck!\n\n"
     sleep(2)
   end
+
+  def as_json(options={})
+    {
+      word: @word,
+      incorrect_guesses_count: @incorrect_guesses_count,
+      max_incorrect_guesses: @max_incorrect_guesses,
+      correct_guesses_count: @correct_guesses_count,
+      correct_letters: @correct_letters,
+      attempts_count: @attempts_count
+    }
+  end
+
+  def to_json(*options)
+    as_json(*options).to_json(*options)
+  end
 end
 
 def print_newlines_and_sleep(seconds)
@@ -117,6 +133,23 @@ def incorrect_guess_print
   print 'maybe next time..'
 end
 
+def save_game(game)
+  File.open('game.json', 'w') { |f| f.write(game.to_json) }
+end
+
+def start_game(command)
+  game = Game.new
+  return game if command == 'new'
+
+  struct_obj = JSON.parse(File.read('game.json'), object_class: OpenStruct)
+  game.word = struct_obj.table[:word]
+  game.attempts_count= struct_obj.table[:attempts_count]
+  game.correct_guesses_count = struct_obj.table[:correct_guesses_count]
+  game.correct_letters = struct_obj.table[:correct_letters]
+  game.incorrect_guesses_count = struct_obj.table[:incorrect_guesses_count]
+  game
+end
+
 def main_menu
   print("H A N G M A N\n\n")
   sleep(2)
@@ -137,7 +170,6 @@ def main_menu
   case command
   when 'play'
     print_newlines_and_sleep(0.5)
-    print_newlines_and_sleep(0.5)
     print_newlines_and_sleep(2)
     play
   when 'help'
@@ -155,12 +187,37 @@ def main_menu
 end
 
 def play
-  game = Game.new
-  # p game.word
-  game.print_correct_guessed_letters
+  print("Input 'new' to start a new game!\n")
+  sleep(1)
+  print("Input 'load' to load a previously saved game~!\n\n")
+  sleep(1)
 
+  print('Your input: ')
+  start_command = gets.chomp
+  while start_command != 'new' && start_command != 'load'
+    print('Your input: ')
+    start_command = gets.chomp
+  end
+
+  game = start_game(start_command)
+  # p game.word
+  print "\nGame loaded!\n\n"
+  sleep(2)
   game_over = false
   until game_over
+    sleep(1)
+    print "TURN #{game.attempts_count + 1}\n\n"
+    sleep(1)
+    print "Save game? (input 'y' to save, 'n' to continue): "
+    save_command = gets.chomp
+    while save_command != 'y' && save_command != 'n'
+      print('Your input: ')
+      save_command = gets.chomp
+    end
+    save_game(game) if save_command == 'y'
+
+    print_newlines_and_sleep(0.5)
+    game.print_correct_guessed_letters
     guess_input_prompt(game)
     guess = gets.chomp
     until guess.length == 1
@@ -190,6 +247,9 @@ def play
       won_game_print(game)
       main_menu
     end
+    print '-----------------------------'
+    print_newlines_and_sleep(0.5)
+    print_newlines_and_sleep(0.5)
   end
 end
 

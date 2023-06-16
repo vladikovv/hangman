@@ -76,7 +76,7 @@ def game_win?(game)
   game.correct_letters.length == game.word.split('').uniq.length
 end
 
-def lost_game_print
+def lost_game_print(game)
   print "You sadly lost the game :( ...........\n"
   sleep(1)
   print "You guessed #{game.correct_guesses_count} letters correctly ..........\n"
@@ -87,7 +87,7 @@ def lost_game_print
   sleep(2)
 end
 
-def won_game_print
+def won_game_print(game)
   print "You guessed it!!! NICe!\n"
   sleep(1)
   print "It took you #{game.correct_guesses_count + game.incorrect_guesses_count} guesses to finish!\n"
@@ -96,25 +96,25 @@ def won_game_print
   sleep(2)
 end
 
-def guess_input_prompt
+def guess_input_prompt(game)
   sleep(0.5)
   print "You have #{game.max_incorrect_guesses - game.incorrect_guesses_count} guesses remaining.\n\n"
   sleep(0.5)
   print "Guess the letters the word contains!\n"
   sleep(0.5)
-  print "Input a single letter: "
+  print 'Input a single letter: '
   sleep(1)
 end
 
 def correct_guess_print
-  print "CORRECT!"
+  print 'CORRECT!'
   sleep(1)
 end
 
 def incorrect_guess_print
   print "sike.....\n"
   sleep(1)
-  print "maybe next time.."
+  print 'maybe next time..'
 end
 
 def main_menu
@@ -156,12 +156,12 @@ end
 
 def play
   game = Game.new
-  #p game.word
+  # p game.word
   game.print_correct_guessed_letters
 
   game_over = false
   until game_over
-    guess_input_prompt
+    guess_input_prompt(game)
     guess = gets.chomp
     until guess.length == 1
       sleep(0.5)
@@ -184,10 +184,10 @@ def play
     print("\n")
     game_over = game_lose?(game) || game_win?(game)
     if game_lose?(game)
-      lost_game_print
+      lost_game_print(game)
       main_menu
     elsif game_win?(game)
-      won_game_print
+      won_game_print(game)
       main_menu
     end
   end

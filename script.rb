@@ -141,9 +141,14 @@ def start_game(command)
   game = Game.new
   return game if command == 'new'
 
-  struct_obj = JSON.parse(File.read('game.json'), object_class: OpenStruct)
+  if File.file?('game.json')
+    struct_obj = JSON.parse(File.read('game.json'), object_class: OpenStruct)
+  else
+    return nil
+  end
+
   game.word = struct_obj.table[:word]
-  game.attempts_count= struct_obj.table[:attempts_count]
+  game.attempts_count = struct_obj.table[:attempts_count]
   game.correct_guesses_count = struct_obj.table[:correct_guesses_count]
   game.correct_letters = struct_obj.table[:correct_letters]
   game.incorrect_guesses_count = struct_obj.table[:incorrect_guesses_count]
@@ -200,6 +205,10 @@ def play
   end
 
   game = start_game(start_command)
+  if game.nil?
+    print 'Could not load save file, exiting ... '
+    exit
+  end
   # p game.word
   print "\nGame loaded!\n\n"
   sleep(2)

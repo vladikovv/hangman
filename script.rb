@@ -155,7 +155,7 @@ def start_game(command)
   game
 end
 
-def main_menu
+def main_menu_print
   print("H A N G M A N\n\n")
   sleep(2)
   print("Input 'play' to start a game!\n")
@@ -165,39 +165,57 @@ def main_menu
   print("Input 'quit' to quit (obviously)\n\n")
   sleep(1)
   print('Your input: ')
-
-  command = gets.chomp
-  while command != 'play' && command != 'help' && command != 'quit'
-    print('Your input: ')
-    command = gets.chomp
-  end
-
-  case command
-  when 'play'
-    print_newlines_and_sleep(0.5)
-    print_newlines_and_sleep(2)
-    play
-  when 'help'
-    print_newlines_and_sleep(0.5)
-    print_newlines_and_sleep(0.5)
-    print_newlines_and_sleep(2)
-    Game.print_instructions
-    main_menu
-  when 'quit'
-    sleep(1)
-    print "nice knowing ya buhbye\n"
-    sleep(2)
-    exit
-  end
 end
 
-def play
+def new_or_loaded_game_print
   print("Input 'new' to start a new game!\n")
   sleep(1)
   print("Input 'load' to load a previously saved game~!\n\n")
   sleep(1)
-
   print('Your input: ')
+end
+
+def select_play
+  print_newlines_and_sleep(0.5)
+  print_newlines_and_sleep(2)
+  play
+end
+
+def select_help
+  print_newlines_and_sleep(0.5)
+  print_newlines_and_sleep(0.5)
+  print_newlines_and_sleep(2)
+  Game.print_instructions
+  main_menu
+end
+
+def select_quit
+  sleep(1)
+  print "nice knowing ya buhbye\n"
+  sleep(2)
+  exit
+end
+
+def main_menu
+  main_menu_print
+  choice = gets.chomp
+  while choice != 'play' && choice != 'help' && choice != 'quit'
+    print('Your input: ')
+    choice = gets.chomp
+  end
+
+  case choice
+  when 'play'
+    select_play
+  when 'help'
+    select_help
+  when 'quit'
+    select_quit
+  end
+end
+
+def play
+  new_or_loaded_game_print
   start_command = gets.chomp
   while start_command != 'new' && start_command != 'load'
     print('Your input: ')
@@ -213,6 +231,7 @@ def play
   print "\nGame loaded!\n\n"
   sleep(2)
   game_over = false
+
   until game_over
     sleep(1)
     print "TURN #{game.attempts_count + 1}\n\n"

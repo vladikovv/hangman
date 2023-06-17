@@ -48,7 +48,7 @@ class Game
     print "\n"
   end
 
-  def self.print_instructions
+  def print_instructions
     print "You need to guess all the letters in a randomly generated word.\n"
     sleep(2)
     print "In the beginning you'll get a cue about the word's length.\n"
